@@ -193,25 +193,41 @@ class Dashboard:
         return data_types
 
     def setup_layout(self):
-        """MODIFIED: This function now defines a fully responsive layout."""
+        """MODIFIED: This function now defines a fully responsive layout with a new header and collapsible controls."""
         
-        # Define the header
-        header = dbc.NavbarSimple(
-            children=[
-                dbc.Button("Analysis Controls", id="open-offcanvas", n_clicks=0, className="ms-auto"),
-            ],
-            brand="Intelligent Automation for Data Analysis",
-            brand_href="/app/",
-            color="primary",
-            dark=True,
-            className="mb-4",
-        )
-
-        # Define the offcanvas (slide-out) controls
-        offcanvas = dbc.Offcanvas(
-            dbc.Card(
+        # Define the header with the new title and a logout button
+        header = dbc.Navbar(
+            dbc.Container(
                 [
-                    dbc.CardHeader("Visualization Controls"),
+                    dbc.NavbarBrand("Intelligent Automation for Data Analysis", href="/app/", className="fw-bold"),
+                    dbc.Nav(
+                        [dbc.Button("Logout", href="/logout", color="danger", className="ms-2")],
+                        className="ms-auto",
+                        navbar=True,
+                    ),
+                ],
+                fluid=True,
+            ),
+            color="dark",
+            dark=True,
+            className="mb-4 shadow-sm",
+        )
+        
+        # Define the collapsible controls section
+        controls = dbc.Card(
+            [
+                dbc.CardHeader(
+                    html.H4(
+                        dbc.Button(
+                            "Analysis & Visualization Controls",
+                            id="collapse-button",
+                            className="w-100 text-start",
+                            color="link",
+                            n_clicks=0,
+                        )
+                    )
+                ),
+                dbc.Collapse(
                     dbc.CardBody(
                         [
                             html.Label("Select Visualization Type:", className="fw-bold"),
@@ -235,23 +251,22 @@ class Dashboard:
                             dcc.Dropdown(id='color-dropdown', clearable=True)
                         ]
                     ),
-                ]
-            ),
-            id="offcanvas",
-            title="Analysis Controls",
-            is_open=False,
+                    id="collapse",
+                    is_open=False, # Start collapsed
+                ),
+            ],
+            className="mb-4",
         )
 
         # Define the main application layout
         self.app.layout = dbc.Container(
             [
                 header,
-                offcanvas,
                 dbc.Row(
                     dbc.Col(
                         dbc.Card(
                             [
-                                dbc.CardHeader(html.H4("Upload Your Data")),
+                                dbc.CardHeader(html.H4("1. Upload Your Data")),
                                 dbc.CardBody(
                                     dcc.Upload(
                                         id='upload-data',
@@ -273,23 +288,28 @@ class Dashboard:
                                     )
                                 ),
                             ]
-                        ),
+                        , className="shadow-sm"),
                         width=12,
                     ),
                     className="mb-4",
                 ),
-                dbc.Tabs(
-                    [
-                        dbc.Tab(dbc.Spinner(html.Div(id='output-data-summary', className="p-4")), label="Dataset Summary"),
-                        dbc.Tab(dbc.Spinner(html.Div(id='visualization-output', className="p-4")), label="Interactive Visualization"),
-                        dbc.Tab(dbc.Spinner(html.Div(id='output-suggested-viz', className="p-4")), label="Suggested Visualizations"),
-                        dbc.Tab(dbc.Spinner(html.Div(id='history-content', className="p-4")), label="History"),
-                    ],
-                    className="mb-4",
+                controls, # Add the new collapsible controls
+                dbc.Card(
+                    dbc.Tabs(
+                        [
+                            dbc.Tab(dbc.Spinner(html.Div(id='output-data-summary', className="p-3")), label="Dataset Summary"),
+                            dbc.Tab(dbc.Spinner(html.Div(id='visualization-output', className="p-3")), label="Interactive Visualization"),
+                            dbc.Tab(dbc.Spinner(html.Div(id='output-suggested-viz', className="p-3")), label="Suggested Visualizations"),
+                            dbc.Tab(dbc.Spinner(html.Div(id='history-content', className="p-3")), label="History"),
+                        ],
+                        className="mb-4",
+                    ),
+                    className="shadow-sm"
                 ),
                 html.Div(id='error-display')
             ],
             fluid=True,
+            className="p-4 bg-light"
         )
 
 
@@ -457,14 +477,14 @@ class Dashboard:
         return html.Div(suggestions_layout)
 
     def setup_callbacks(self):
-        # NEW: Callback to toggle the offcanvas controls
+        # NEW: Callback to toggle the collapsible controls
         @self.app.callback(
-            Output("offcanvas", "is_open"),
-            Input("open-offcanvas", "n_clicks"),
-            [State("offcanvas", "is_open")],
+            Output("collapse", "is_open"),
+            [Input("collapse-button", "n_clicks")],
+            [State("collapse", "is_open")],
         )
-        def toggle_offcanvas(n1, is_open):
-            if n1:
+        def toggle_collapse(n, is_open):
+            if n:
                 return not is_open
             return is_open
 
