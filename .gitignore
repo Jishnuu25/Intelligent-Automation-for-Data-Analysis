@@ -1,0 +1,10 @@
+# Environment variables
+.env
+
+# Firebase credentials file (just in case)
+firebase_config.json
+
+# Python virtual environment
+venv/
+*.pyc
+__pycache__/
