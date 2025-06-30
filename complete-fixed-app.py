@@ -64,13 +64,12 @@ auth_client = firebase.auth()
 # Dashboard class
 class Dashboard:
     def __init__(self):
-        # MODIFIED: Changed url_base_pathname to routes_pathname_prefix as per the error log
         self.app = Dash(
             __name__,
             server=flask_app,
             routes_pathname_prefix="/dashboard/",
             requests_pathname_prefix="/dashboard/",
-            external_stylesheets=[dbc.themes.BOOTSTRAP],
+            external_stylesheets=[dbc.themes.BOOTSTRAP, dbc.icons.FONT_AWESOME],
             suppress_callback_exceptions=True,
         )
         self.df = None
@@ -194,53 +193,105 @@ class Dashboard:
         return data_types
 
     def setup_layout(self):
-        self.app.layout = dbc.Container([
-            html.H1("Smart Data Analysis Dashboard", className="text-center my-4"),
-            dbc.Card([
-                dbc.CardBody([
-                    html.H4("Upload Your Data", className="text-center my-4"),
-                    dcc.Upload(
-                        id='upload-data',
-                        children=html.Div(['Drag and Drop or ', html.A('Select CSV File')]),
-                        style={'width': '100%', 'height': '60px', 'lineHeight': '60px', 'borderWidth': '1px', 'borderStyle': 'dashed', 'borderRadius': '5px', 'textAlign': 'center'},
-                        multiple=False
-                    )
-                ])
-            ], className="mb-4"),
-            dbc.Tabs([
-                dbc.Tab([dbc.Spinner(html.Div(id='output-data-summary'))], label="Dataset Summary"),
-                dbc.Tab([
-                    dbc.Row([
-                        dbc.Col([
-                            html.H4("Visualization Controls", className="mt-3"),
-                            dbc.Card([
-                                dbc.CardBody([
-                                    html.Label("Select Visualization Type:"),
-                                    dcc.Dropdown(id='viz-type-dropdown', options=[
-                                        {'label': 'Scatter Plot', 'value': 'scatter'},
-                                        {'label': 'Line Plot', 'value': 'line'},
-                                        {'label': 'Bar Chart', 'value': 'bar'},
-                                        {'label': 'Box Plot', 'value': 'box'},
-                                        {'label': 'Histogram', 'value': 'histogram'},
-                                        {'label': 'Heatmap', 'value': 'heatmap'}
-                                    ], value='scatter'),
-                                    html.Label("X-Axis:", className="mt-3"),
-                                    dcc.Dropdown(id='x-axis-dropdown'),
-                                    html.Label("Y-Axis:", className="mt-3"),
-                                    dcc.Dropdown(id='y-axis-dropdown'),
-                                    html.Label("Color By (Optional):", className="mt-3"),
-                                    dcc.Dropdown(id='color-dropdown', clearable=True)
-                                ])
-                            ])
-                        ], width=3),
-                        dbc.Col([dbc.Spinner(html.Div(id='visualization-output'))], width=9)
-                    ])
-                ], label="Interactive Visualizations"),
-                dbc.Tab([dbc.Spinner(html.Div(id='output-suggested-viz'))], label="Suggested Visualizations"),
-                dbc.Tab([dbc.Spinner(html.Div(id='history-content'))], label="History")
-            ], className="mb-4"),
-            html.Div(id='error-display')
-        ])
+        """MODIFIED: This function now defines a fully responsive layout."""
+        
+        # Define the header
+        header = dbc.NavbarSimple(
+            children=[
+                dbc.Button("Analysis Controls", id="open-offcanvas", n_clicks=0, className="ms-auto"),
+            ],
+            brand="Intelligent Automation for Data Analysis",
+            brand_href="/app/",
+            color="primary",
+            dark=True,
+            className="mb-4",
+        )
+
+        # Define the offcanvas (slide-out) controls
+        offcanvas = dbc.Offcanvas(
+            dbc.Card(
+                [
+                    dbc.CardHeader("Visualization Controls"),
+                    dbc.CardBody(
+                        [
+                            html.Label("Select Visualization Type:", className="fw-bold"),
+                            dcc.Dropdown(
+                                id='viz-type-dropdown',
+                                options=[
+                                    {'label': 'Scatter Plot', 'value': 'scatter'},
+                                    {'label': 'Line Plot', 'value': 'line'},
+                                    {'label': 'Bar Chart', 'value': 'bar'},
+                                    {'label': 'Box Plot', 'value': 'box'},
+                                    {'label': 'Histogram', 'value': 'histogram'},
+                                    {'label': 'Heatmap', 'value': 'heatmap'}
+                                ],
+                                value='scatter'
+                            ),
+                            html.Label("X-Axis:", className="mt-3 fw-bold"),
+                            dcc.Dropdown(id='x-axis-dropdown'),
+                            html.Label("Y-Axis:", className="mt-3 fw-bold"),
+                            dcc.Dropdown(id='y-axis-dropdown'),
+                            html.Label("Color By (Optional):", className="mt-3 fw-bold"),
+                            dcc.Dropdown(id='color-dropdown', clearable=True)
+                        ]
+                    ),
+                ]
+            ),
+            id="offcanvas",
+            title="Analysis Controls",
+            is_open=False,
+        )
+
+        # Define the main application layout
+        self.app.layout = dbc.Container(
+            [
+                header,
+                offcanvas,
+                dbc.Row(
+                    dbc.Col(
+                        dbc.Card(
+                            [
+                                dbc.CardHeader(html.H4("Upload Your Data")),
+                                dbc.CardBody(
+                                    dcc.Upload(
+                                        id='upload-data',
+                                        children=html.Div([
+                                            'Drag and Drop or ',
+                                            html.A('Select a File')
+                                        ]),
+                                        style={
+                                            'width': '100%',
+                                            'height': '60px',
+                                            'lineHeight': '60px',
+                                            'borderWidth': '2px',
+                                            'borderStyle': 'dashed',
+                                            'borderRadius': '5px',
+                                            'textAlign': 'center',
+                                            'padding': '10px'
+                                        },
+                                        multiple=False
+                                    )
+                                ),
+                            ]
+                        ),
+                        width=12,
+                    ),
+                    className="mb-4",
+                ),
+                dbc.Tabs(
+                    [
+                        dbc.Tab(dbc.Spinner(html.Div(id='output-data-summary', className="p-4")), label="Dataset Summary"),
+                        dbc.Tab(dbc.Spinner(html.Div(id='visualization-output', className="p-4")), label="Interactive Visualization"),
+                        dbc.Tab(dbc.Spinner(html.Div(id='output-suggested-viz', className="p-4")), label="Suggested Visualizations"),
+                        dbc.Tab(dbc.Spinner(html.Div(id='history-content', className="p-4")), label="History"),
+                    ],
+                    className="mb-4",
+                ),
+                html.Div(id='error-display')
+            ],
+            fluid=True,
+        )
+
 
     def parse_upload(self, contents, filename):
         """Parse uploaded file contents"""
@@ -406,6 +457,17 @@ class Dashboard:
         return html.Div(suggestions_layout)
 
     def setup_callbacks(self):
+        # NEW: Callback to toggle the offcanvas controls
+        @self.app.callback(
+            Output("offcanvas", "is_open"),
+            Input("open-offcanvas", "n_clicks"),
+            [State("offcanvas", "is_open")],
+        )
+        def toggle_offcanvas(n1, is_open):
+            if n1:
+                return not is_open
+            return is_open
+
         @self.app.callback(
             [Output('x-axis-dropdown', 'options'), Output('y-axis-dropdown', 'options'), Output('color-dropdown', 'options'), Output('x-axis-dropdown', 'value'), Output('y-axis-dropdown', 'value')],
             Input('upload-data', 'contents'),
