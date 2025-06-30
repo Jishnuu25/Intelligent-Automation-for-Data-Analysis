@@ -1,11 +1,11 @@
 Intelligent Data Analysis Dashboard
-<<<<<<< HEAD
+
 An interactive web application built with Flask and Dash that empowers users to upload datasets and instantly generate automated summaries, data quality assessments, and smart visualizations without writing any code.
 This project allows anyone, regardless of their technical background, to gain meaningful insights from their data through a secure, intuitive, and intelligent user interface.
-Live Demo: [Link to your deployed Render app will go here]
-=======
+Live Demo: https://datasense-80w9.onrender.com/
+
 An interactive web application built with Flask and Dash that empowers users to upload datasets and instantly generate automated summaries, data quality assessments, and smart visualizations without writing any code.This project allows anyone, regardless of their technical background, to gain meaningful insights from their data through a secure, intuitive, and intelligent user interface.
->>>>>>> 2527643 (Add detailed project README)
+
 ✨ Key Features
 Secure User Authentication: Full signup, login, and session management using Firebase Authentication.
 Versatile File Upload: Supports both CSV and Excel file formats.
@@ -14,14 +14,16 @@ In-Depth Data Quality Assessment: Automatically detects missing values, duplicat
 Smart Visualization Suggestions: An intelligent engine analyzes your data's structure and recommends the most relevant plots (Time Series, Box Plots, Correlation Heatmaps, etc.).
 Interactive Plotting Controls: Manually create and customize a wide range of visualizations to explore your data.
 Persistent Analysis History: Every upload and visualization action is saved to a personal history log using Firestore.
+
 🛠️ Technology Stack
-<<<<<<< HEAD
 Backend: Flask, Gunicorn
 Dashboarding: Dash, Plotly Express
 Data Manipulation: Pandas, NumPy
 Authentication & Database: Pyrebase (Auth), Firebase Admin SDK (Firestore)
 Styling: Dash Bootstrap Components
 Deployment: Render
+
+
 🚀 Getting Started
 Follow these instructions to set up and run the project on your local machine.
 Prerequisites
@@ -38,7 +40,6 @@ Windows:
 python -m venv venv
 .\venv\Scripts\activate
 
-
 macOS / Linux:
 python3 -m venv venv
 source venv/bin/activate
@@ -54,9 +55,9 @@ Create a file named .env in the root of the project.
 Copy the content from the example below and paste it into your .env file.
 Fill in the values with your own credentials from your Firebase project and a secure secret key.
 .env.example
-# === Pyrebase Config (Found in your Firebase project settings -> General) ===
-=======
+# === Pyrebase Config (Found in your Firebase project settings -> General) ==========
 Backend: Flask, GunicornDashboarding: Dash, Plotly ExpressData Manipulation: Pandas, NumPyAuthentication & Database: Pyrebase (Auth), Firebase Admin SDK (Firestore)Styling: Dash Bootstrap ComponentsDeployment: Render
+
 🚀 Getting Started
 Follow these instructions to set up and run the project on your local machine.PrerequisitesPython 3.9+A Firebase project with Authentication and Firestore enabled.1. Clone the Repositorygit clone https://github.com/VaishnavDevaraj/Intelligent-Automation-for-Data-Analysis.git
 cd Intelligent-Automation-for-Data-Analysis
@@ -87,8 +88,8 @@ IMPORTANT: Add your .env file to .gitignore to ensure you never commit your secr
 5. Run the Application
 python complete-fixed-app.py
 
-
 Open your browser and navigate to http://127.0.0.1:5001.
+
 ☁️ Deployment
 This application is configured for deployment on Render. You can deploy your own version by following these steps:
 Push your code to a public GitHub repository.
@@ -98,10 +99,12 @@ Runtime: Python 3
 Build Command: pip install -r requirements.txt
 Start Command: gunicorn complete-fixed-app:flask_app
 Add all the variables from your .env file to the Environment tab in your Render service settings.
+
 🤝 Contributing
 Contributions, issues, and feature requests are welcome! While this is a portfolio project with a proprietary license, I am open to suggestions for improvement.
 Feel free to open an Issue to report a bug or suggest a new feature.
 If you'd like to propose a code change, please Fork the repository and create a Pull Request. Please note that all contributions will be reviewed and are subject to the project owner's discretion.
+
 📜 License
 This project is the intellectual property of Vaishnav Devaraj.
 Copyright (c) 2025 Vaishnav Devaraj. All Rights Reserved.
@@ -110,19 +113,7 @@ You are prohibited from:
 Modifying, merging, publishing, distributing, or sublicensing the software for commercial purposes.
 Selling copies of the software.
 Using the software for any commercial application without the express written permission of the copyright holder.
+
 👤 Contact
 Vaishnav Devaraj - GitHub Profile
 Project Link: https://github.com/VaishnavDevaraj/Intelligent-Automation-for-Data-Analysis
-=======
-IMPORTANT: Add your .env file to .gitignore to ensure you never commit your secrets.5. Run the Applicationpython complete-fixed-app.py
-Open your browser and navigate to http://127.0.0.1:5001.
-☁️ Deployment
-This application is configured for deployment on Render. You can deploy your own version by following these steps:Push your code to a public GitHub repository.Create a new "Web Service" on Render and connect it to your repository.Use the following settings:Runtime: Python 3Build Command: pip install -r requirements.txtStart Command: gunicorn complete-fixed-app:flask_appAdd all the variables from your .env file to the Environment tab in your Render service settings.
-🤝 Contributing
-Contributions, issues, and feature requests are welcome! While this is a portfolio project with a proprietary license, I am open to suggestions for improvement.Feel free to open an Issue to report a bug or suggest a new feature.If you'd like to propose a code change, please Fork the repository and create a Pull Request. Please note that all contributions will be reviewed and are subject to the project owner's discretion.
-📜 License
-This project is the intellectual property of Vaishnav Devaraj.Copyright (c) 2025 Vaishnav Devaraj. All Rights Reserved.This software is proprietary. Permission is hereby granted to view the source code and fork the repository for the sole purpose of submitting contributions (pull requests) or for personal, non-commercial, educational use.You are prohibited from:Modifying, merging, publishing, distributing, or sublicensing the software for commercial purposes.Selling copies of the software.Using the software for any commercial application without the express written permission of the copyright holder.
-👤 Contact
-Vaishnav Devaraj - GitHub Profile
-Project Link: https://github.com/VaishnavDevaraj/Intelligent-Automation-for-Data-Analysis
->>>>>>> 2527643 (Add detailed project README)
