@@ -67,7 +67,6 @@ macOS / Linux:python3 -m venv venv
 source venv/bin/activate
 3. Install Dependenciespip install -r requirements.txt
 4. Configure Environment VariablesThis project uses environment variables to keep your secret keys secure.Create a file named .env in the root of the project.Copy the content from the example below and paste it into your .env file.Fill in the values with your own credentials from your Firebase project and a secure secret key..env.example# === Pyrebase Config (Found in your Firebase project settings -> General) ===
->>>>>>> 2527643 (Add detailed project README)
 PYREBASE_API_KEY="AIzaxxxxxxxxxxxxxxxxxxxxx"
 PYREBASE_AUTH_DOMAIN="your-project-id.firebaseapp.com"
 PYREBASE_DATABASE_URL="https://your-project-id-default-rtdb.firebaseio.com"
