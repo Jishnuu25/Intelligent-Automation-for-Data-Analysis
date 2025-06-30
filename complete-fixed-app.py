@@ -64,10 +64,11 @@ auth_client = firebase.auth()
 # Dashboard class
 class Dashboard:
     def __init__(self):
+        # MODIFIED: Changed url_base_pathname to routes_pathname_prefix as per the error log
         self.app = Dash(
             __name__,
             server=flask_app,
-            url_base_pathname="/dashboard/",
+            routes_pathname_prefix="/dashboard/",
             requests_pathname_prefix="/dashboard/",
             external_stylesheets=[dbc.themes.BOOTSTRAP],
             suppress_callback_exceptions=True,
