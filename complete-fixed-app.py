@@ -200,9 +200,9 @@ class Dashboard:
             dbc.Container(
                 [
                     dbc.NavbarBrand("Intelligent Automation for Data Analysis", href="/app/", className="fw-bold"),
-                    # MODIFIED: Use dbc.NavLink for a reliable logout link
+                    # MODIFIED: Use dbc.NavLink with external_link=True for a reliable logout link
                     dbc.Nav(
-                        [dbc.NavLink("Logout", href="/logout", active="exact", className="btn btn-danger text-white")],
+                        [dbc.NavLink("Logout", href="/logout", active="exact", className="btn btn-danger text-white", external_link=True)],
                         className="ms-auto",
                         navbar=True,
                     ),
@@ -518,7 +518,6 @@ class Dashboard:
                 print(f"Error updating dropdowns: {str(e)}")
                 return [], [], [], None, None
 
-        # MODIFIED: This callback now also controls the loading overlay
         @self.app.callback(
             [Output('output-data-summary', 'children'), 
              Output('output-suggested-viz', 'children'),
