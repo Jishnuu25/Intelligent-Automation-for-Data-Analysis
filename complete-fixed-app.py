@@ -531,9 +531,12 @@ def login():
             user = auth_client.sign_in_with_email_and_password(email, password)
             session["user"] = email
             flash("Login successful!", "success")
-            return redirect(url_for("dashboard/")) # MODIFIED: Redirect to the route with a trailing slash
+            return redirect(url_for("dashboard"))
         except Exception as e:
+            # NEW: Print the actual Firebase error to the logs for debugging
+            print(f"Firebase login failed: {e}") 
             flash(f"Login failed: Invalid email or password", "danger")
+            return render_template("login.html") # Return to login page on failure
     return render_template("login.html")
 
 @flask_app.route("/logout")
@@ -542,7 +545,6 @@ def logout():
     flash("You have been logged out.", "info")
     return redirect(url_for("home"))
 
-# MODIFIED: Added a trailing slash to match the Dash app's base pathname
 @flask_app.route("/dashboard/")
 def dashboard():
     if "user" not in session:
