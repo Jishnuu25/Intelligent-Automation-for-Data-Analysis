@@ -195,13 +195,14 @@ class Dashboard:
     def setup_layout(self):
         """MODIFIED: This function now defines a fully responsive layout with a new header and collapsible controls."""
         
-        # Define the header with the new title and a logout button
+        # Define the header with the new title and a working logout button
         header = dbc.Navbar(
             dbc.Container(
                 [
                     dbc.NavbarBrand("Intelligent Automation for Data Analysis", href="/app/", className="fw-bold"),
+                    # MODIFIED: Use dbc.NavLink for a reliable logout link
                     dbc.Nav(
-                        [dbc.Button("Logout", href="/logout", color="danger", className="ms-2")],
+                        [dbc.NavLink("Logout", href="/logout", active="exact", className="btn btn-danger text-white")],
                         className="ms-auto",
                         navbar=True,
                     ),
@@ -261,6 +262,15 @@ class Dashboard:
         # Define the main application layout
         self.app.layout = dbc.Container(
             [
+                # NEW: Add a Loading overlay for long callbacks
+                dcc.Loading(
+                    id="loading-overlay",
+                    type="default",
+                    fullscreen=True,
+                    children=[
+                        html.Div(id="loading-output") # Dummy output for the loading spinner
+                    ]
+                ),
                 header,
                 dbc.Row(
                     dbc.Col(
@@ -477,7 +487,6 @@ class Dashboard:
         return html.Div(suggestions_layout)
 
     def setup_callbacks(self):
-        # NEW: Callback to toggle the collapsible controls
         @self.app.callback(
             Output("collapse", "is_open"),
             [Input("collapse-button", "n_clicks")],
@@ -509,14 +518,17 @@ class Dashboard:
                 print(f"Error updating dropdowns: {str(e)}")
                 return [], [], [], None, None
 
+        # MODIFIED: This callback now also controls the loading overlay
         @self.app.callback(
-            [Output('output-data-summary', 'children'), Output('output-suggested-viz', 'children')],
+            [Output('output-data-summary', 'children'), 
+             Output('output-suggested-viz', 'children'),
+             Output('loading-output', 'children')], # Dummy output for the spinner
             Input('upload-data', 'contents'),
             State('upload-data', 'filename')
         )
         def update_output(contents, filename):
             if contents is None:
-                return html.Div("Please upload a CSV or Excel file to begin.", className="text-center p-4"), None
+                return html.Div("Please upload a CSV or Excel file to begin.", className="text-center p-4"), None, None
             try:
                 df = self.parse_upload(contents, filename)
                 if df is None: raise ValueError("Failed to parse file")
@@ -532,10 +544,10 @@ class Dashboard:
                         db.collection("history").add(history_data)
                 except Exception as firestore_error:
                     print(f"Error saving upload to Firestore: {str(firestore_error)}")
-                return summary, suggestions
+                return summary, suggestions, None # Return None for the dummy output
             except Exception as e:
                 error_msg = dbc.Alert(f"Error processing file: {str(e)}", color="danger", dismissable=True)
-                return error_msg, error_msg
+                return error_msg, None, None
 
         @self.app.callback(Output('history-content', 'children'), Input('upload-data', 'contents'))
         def update_history_tab(contents):
