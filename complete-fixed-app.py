@@ -4,6 +4,11 @@ import base64
 import io
 import os
 import json
+from dotenv import load_dotenv
+
+# Load environment variables from .env file for local development
+load_dotenv()
+
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 from flask_bcrypt import Bcrypt
 from dash import Dash, html, dcc
@@ -16,13 +21,11 @@ import pandas as pd
 import pyrebase
 import plotly.express as px
 import xml.etree.ElementTree as ET
-# complete-fixed-app.py
-from dotenv import load_dotenv
-load_dotenv()
 
 # Initialize Flask app
 flask_app = Flask(__name__)
-flask_app.secret_key = "your_secret_key" # You should also move this to an environment variable for production
+# Load secret key from environment variable
+flask_app.secret_key = os.environ.get("FLASK_SECRET_KEY", "a-default-fallback-secret-key")
 bcrypt = Bcrypt(flask_app)
 
 # MODIFIED: Load Firebase Admin credentials from an environment variable
@@ -59,10 +62,12 @@ auth_client = firebase.auth()
 # Dashboard class
 class Dashboard:
     def __init__(self):
+        # MODIFIED: Added requests_pathname_prefix to fix routing on Render
         self.app = Dash(
             __name__,
             server=flask_app,
             url_base_pathname="/dashboard/",
+            requests_pathname_prefix="/dashboard/",
             external_stylesheets=[dbc.themes.BOOTSTRAP],
             suppress_callback_exceptions=True,
         )
@@ -243,7 +248,7 @@ class Dashboard:
         try:
             if 'csv' in filename.lower():
                 df = pd.read_csv(io.StringIO(decoded.decode('utf-8')))
-            elif 'xls' in filename.lower():
+            elif 'xls' in filename.lower() or 'xlsx' in filename.lower():
                 df = pd.read_excel(io.BytesIO(decoded))
             else:
                 raise ValueError("Unsupported file type. Please upload a CSV or Excel file.")
