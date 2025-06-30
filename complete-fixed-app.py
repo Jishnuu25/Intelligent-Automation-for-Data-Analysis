@@ -39,10 +39,9 @@ if not firebase_creds_json_str:
 
 firebase_creds_dict = json.loads(firebase_creds_json_str)
 
-# Initialize Firebase Admin SDK
-cred = credentials.Certificate(firebase_creds_dict)
-# Add a check to prevent re-initializing the app
+# Initialize Firebase Admin SDK - Add a check to prevent re-initializing
 if not firebase_admin._apps:
+    cred = credentials.Certificate(firebase_creds_dict)
     firebase_admin.initialize_app(cred)
 db = firestore.client()
 
@@ -503,7 +502,7 @@ class Dashboard:
 @flask_app.route("/")
 def home():
     if "user" in session:
-        return redirect(url_for("app_page")) # MODIFIED: Redirect to the new app page
+        return redirect("/app/") # Use explicit redirect
     return render_template("login.html")
 
 @flask_app.route("/signup", methods=["GET", "POST"])
@@ -514,7 +513,7 @@ def signup():
         try:
             user = auth_client.create_user_with_email_and_password(email, password)
             flash("Account created successfully! Please log in.", "success")
-            return redirect(url_for("home"))
+            return redirect("/") # Use explicit redirect
         except Exception as e:
             error_message = str(e)
             if "EMAIL_EXISTS" in error_message:
@@ -533,7 +532,7 @@ def login():
             user = auth_client.sign_in_with_email_and_password(email, password)
             session["user"] = email
             flash("Login successful!", "success")
-            return redirect(url_for("app_page")) # MODIFIED: Redirect to the new app page
+            return redirect("/app/") # Use explicit redirect
         except Exception as e:
             print(f"Firebase login failed: {e}") 
             flash(f"Login failed: Invalid email or password", "danger")
@@ -544,14 +543,14 @@ def login():
 def logout():
     session.pop("user", None)
     flash("You have been logged out.", "info")
-    return redirect(url_for("home"))
+    return redirect("/") # Use explicit redirect
 
-# NEW: This route now serves the main container page
-@flask_app.route("/app")
+# This route now serves the main container page
+@flask_app.route("/app/")
 def app_page():
     if "user" not in session:
         flash("Please log in to access the dashboard.", "warning")
-        return redirect(url_for("home"))
+        return redirect("/") # Use explicit redirect
     # This template contains the iframe that points to /dashboard/
     return render_template("dashboard.html")
 
@@ -559,7 +558,7 @@ def app_page():
 def history():
     if "user" not in session:
         flash("Please log in to view your history.", "warning")
-        return redirect(url_for("home"))
+        return redirect("/") # Use explicit redirect
     try:
         user_email = session["user"]
         history_ref = db.collection("history").where("user_email", "==", user_email).order_by("timestamp", direction=firestore.Query.DESCENDING)
@@ -576,8 +575,10 @@ def history():
             flash(f"Error: {str(e)}", "danger")
             return render_template("history.html", history=[])
 
+# Create the dashboard instance AFTER all routes are defined
+dashboard = Dashboard()
+
 # Run the app
 if __name__ == "__main__":
-    dashboard = Dashboard()
     # The Dash app is already attached to the flask_app server, so we just run flask_app
     flask_app.run(debug=True, port=5001)
