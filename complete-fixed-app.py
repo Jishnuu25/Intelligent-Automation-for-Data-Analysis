@@ -11,6 +11,7 @@ load_dotenv()
 
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 from flask_bcrypt import Bcrypt
+from werkzeug.middleware.proxy_fix import ProxyFix # NEW: Import ProxyFix
 from dash import Dash, html, dcc
 import dash_bootstrap_components as dbc
 from dash.dependencies import Input, Output, State
@@ -26,6 +27,11 @@ import xml.etree.ElementTree as ET
 flask_app = Flask(__name__)
 # Load secret key from environment variable
 flask_app.secret_key = os.environ.get("FLASK_SECRET_KEY", "a-default-fallback-secret-key")
+
+# NEW: Apply ProxyFix middleware for deployment behind a reverse proxy (like Render)
+# This helps the app correctly handle URL schemes (http/https) and paths.
+flask_app.wsgi_app = ProxyFix(flask_app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
+
 bcrypt = Bcrypt(flask_app)
 
 # MODIFIED: Load Firebase Admin credentials from an environment variable
@@ -62,7 +68,7 @@ auth_client = firebase.auth()
 # Dashboard class
 class Dashboard:
     def __init__(self):
-        # MODIFIED: Added requests_pathname_prefix to fix routing on Render
+        # The requests_pathname_prefix is still needed for Dash to build its URLs correctly.
         self.app = Dash(
             __name__,
             server=flask_app,
