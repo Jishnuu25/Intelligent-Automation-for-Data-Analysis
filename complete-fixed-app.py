@@ -11,7 +11,7 @@ load_dotenv()
 
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 from flask_bcrypt import Bcrypt
-from werkzeug.middleware.proxy_fix import ProxyFix # NEW: Import ProxyFix
+from werkzeug.middleware.proxy_fix import ProxyFix # Import ProxyFix
 from dash import Dash, html, dcc
 import dash_bootstrap_components as dbc
 from dash.dependencies import Input, Output, State
@@ -21,27 +21,22 @@ import numpy as np
 import pandas as pd
 import pyrebase
 import plotly.express as px
-import xml.etree.ElementTree as ET
 
 # Initialize Flask app
 flask_app = Flask(__name__)
 # Load secret key from environment variable
 flask_app.secret_key = os.environ.get("FLASK_SECRET_KEY", "a-default-fallback-secret-key")
 
-# NEW: Apply ProxyFix middleware for deployment behind a reverse proxy (like Render)
-# This helps the app correctly handle URL schemes (http/https) and paths.
+# Apply ProxyFix middleware for deployment behind a reverse proxy (like Render)
 flask_app.wsgi_app = ProxyFix(flask_app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
 
 bcrypt = Bcrypt(flask_app)
 
-# MODIFIED: Load Firebase Admin credentials from an environment variable
-# Get the JSON string from the environment variable
+# Load Firebase Admin credentials from an environment variable
 firebase_creds_json_str = os.environ.get('FIREBASE_CREDS_JSON')
 if not firebase_creds_json_str:
-    # This will raise an error during startup if the variable is not set
     raise ValueError("FIREBASE_CREDS_JSON environment variable not set.")
 
-# Convert the JSON string into a dictionary
 firebase_creds_dict = json.loads(firebase_creds_json_str)
 
 # Initialize Firebase Admin SDK
@@ -49,7 +44,7 @@ cred = credentials.Certificate(firebase_creds_dict)
 firebase_admin.initialize_app(cred)
 db = firestore.client()
 
-# MODIFIED: Load Pyrebase config from environment variables as well
+# Load Pyrebase config from environment variables
 firebase_config = {
     "apiKey": os.environ.get("PYREBASE_API_KEY"),
     "authDomain": os.environ.get("PYREBASE_AUTH_DOMAIN"),
@@ -68,7 +63,6 @@ auth_client = firebase.auth()
 # Dashboard class
 class Dashboard:
     def __init__(self):
-        # The requests_pathname_prefix is still needed for Dash to build its URLs correctly.
         self.app = Dash(
             __name__,
             server=flask_app,
@@ -77,9 +71,8 @@ class Dashboard:
             external_stylesheets=[dbc.themes.BOOTSTRAP],
             suppress_callback_exceptions=True,
         )
-        # Store the current dataframe and filename
         self.df = None
-        self.filename = None  # Store the original filename
+        self.filename = None
         self.setup_layout()
         self.setup_callbacks()
 
@@ -538,7 +531,7 @@ def login():
             user = auth_client.sign_in_with_email_and_password(email, password)
             session["user"] = email
             flash("Login successful!", "success")
-            return redirect(url_for("dashboard"))
+            return redirect(url_for("dashboard/")) # MODIFIED: Redirect to the route with a trailing slash
         except Exception as e:
             flash(f"Login failed: Invalid email or password", "danger")
     return render_template("login.html")
@@ -549,7 +542,8 @@ def logout():
     flash("You have been logged out.", "info")
     return redirect(url_for("home"))
 
-@flask_app.route("/dashboard")
+# MODIFIED: Added a trailing slash to match the Dash app's base pathname
+@flask_app.route("/dashboard/")
 def dashboard():
     if "user" not in session:
         flash("Please log in to access the dashboard.", "warning")
