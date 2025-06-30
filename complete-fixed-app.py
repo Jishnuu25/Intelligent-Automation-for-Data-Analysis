@@ -625,7 +625,7 @@ def login():
         try:
             user = auth_client.sign_in_with_email_and_password(email, password)
             session["user"] = email
-            flash("Login successful!", "success")
+            # MODIFIED: Removed the redundant "Login successful!" flash message
             return redirect("/app/") # Use explicit redirect
         except Exception as e:
             print(f"Firebase login failed: {e}") 
