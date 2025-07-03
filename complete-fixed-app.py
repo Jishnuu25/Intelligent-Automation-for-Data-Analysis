@@ -648,6 +648,11 @@ def app_page():
     # This template contains the iframe that points to /dashboard/
     return render_template("dashboard.html")
 
+# NEW: Add a dedicated health check endpoint for the cron job
+@flask_app.route("/health")
+def health_check():
+    return "OK", 200
+
 @flask_app.route("/history")
 def history():
     if "user" not in session:
