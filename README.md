@@ -105,8 +105,8 @@ Feel free to open an Issue to report a bug or suggest a new feature.
 If you'd like to propose a code change, please Fork the repository and create a Pull Request. Please note that all contributions will be reviewed and are subject to the project owner's discretion.
 
 📜 License
-This project is the intellectual property of Vaishnav Devaraj.
-Copyright (c) 2025 Vaishnav Devaraj. All Rights Reserved.
+This project is the intellectual property of Vaishnav Devaraj and Jishnu Shyam.
+Copyright (c) 2025 Vaishnav Devaraj and Jishnu Shyam. All Rights Reserved.
 This software is proprietary. Permission is hereby granted to view the source code and fork the repository for the sole purpose of submitting contributions (pull requests) or for personal, non-commercial, educational use.
 You are prohibited from:
 Modifying, merging, publishing, distributing, or sublicensing the software for commercial purposes.
@@ -114,5 +114,5 @@ Selling copies of the software.
 Using the software for any commercial application without the express written permission of the copyright holder.
 
 👤 Contact
-Vaishnav Devaraj - GitHub Profile
+VaishnavDevaraj - GitHub Profile
 Project Link: https://github.com/VaishnavDevaraj/Intelligent-Automation-for-Data-Analysis
