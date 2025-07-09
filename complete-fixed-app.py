@@ -32,6 +32,14 @@ flask_app.wsgi_app = ProxyFix(flask_app.wsgi_app, x_for=1, x_proto=1, x_host=1, 
 
 bcrypt = Bcrypt(flask_app)
 
+# NEW: Add a dedicated health check endpoint that runs before any other request logic
+@flask_app.before_request
+def before_request_func():
+    # Check if the request path is for the health check
+    if request.path == '/health':
+        # Return the simple "OK" response immediately, bypassing all other logic
+        return "OK", 200
+
 # Load Firebase Admin credentials from an environment variable
 firebase_creds_json_str = os.environ.get('FIREBASE_CREDS_JSON')
 if not firebase_creds_json_str:
@@ -647,11 +655,6 @@ def app_page():
         return redirect("/") # Use explicit redirect
     # This template contains the iframe that points to /dashboard/
     return render_template("dashboard.html")
-
-# NEW: Add a dedicated health check endpoint for the cron job
-@flask_app.route("/health")
-def health_check():
-    return "OK", 200
 
 @flask_app.route("/history")
 def history():
