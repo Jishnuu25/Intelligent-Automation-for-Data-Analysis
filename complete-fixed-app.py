@@ -22,23 +22,18 @@ import pandas as pd
 import pyrebase
 import plotly.express as px
 
-# Initialize Flask app
 flask_app = Flask(__name__)
-# Load secret key from environment variable
-flask_app.secret_key = os.environ.get("FLASK_SECRET_KEY", "a-default-fallback-secret-key")
 
-# Apply ProxyFix middleware for deployment behind a reverse proxy (like Render)
-flask_app.wsgi_app = ProxyFix(flask_app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
-
-bcrypt = Bcrypt(flask_app)
-
-# NEW: Add a dedicated health check endpoint that runs before any other request logic
+# --- Definitive Health Check ---
 @flask_app.before_request
 def before_request_func():
-    # Check if the request path is for the health check
     if request.path == '/health':
-        # Return the simple "OK" response immediately, bypassing all other logic
         return "OK", 200
+# --- End Health Check ---
+
+flask_app.wsgi_app = ProxyFix(flask_app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
+flask_app.secret_key = os.environ.get("FLASK_SECRET_KEY", "a-default-fallback-secret-key")
+bcrypt = Bcrypt(flask_app)
 
 # Load Firebase Admin credentials from an environment variable
 firebase_creds_json_str = os.environ.get('FIREBASE_CREDS_JSON')
