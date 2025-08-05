@@ -55,7 +55,7 @@ Create a file named .env in the root of the project.
 Copy the content from the example below and paste it into your .env file.
 Fill in the values with your own credentials from your Firebase project and a secure secret key.
 .env.example
-# === Pyrebase Config (Found in your Firebase project settings -> General) ==========
+ 
 Backend: Flask, GunicornDashboarding: Dash, Plotly ExpressData Manipulation: Pandas, NumPyAuthentication & Database: Pyrebase (Auth), Firebase Admin SDK (Firestore)Styling: Dash Bootstrap ComponentsDeployment: Render
 
 🚀 Getting Started
@@ -116,3 +116,4 @@ Using the software for any commercial application without the express written pe
 👤 Contact
 VaishnavDevaraj - GitHub Profile
 Project Link: https://github.com/VaishnavDevaraj/Intelligent-Automation-for-Data-Analysis
+
